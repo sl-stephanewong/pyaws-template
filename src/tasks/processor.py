@@ -5,7 +5,7 @@ from .data_source import DataSource, DataFormat
 from pyspark.sql import DataFrame, DataFrameWriter
 
 
-def format_save(writer: DataFrameWriter, data_format: str, path: str) -> None:
+def format_save(writer: DataFrameWriter, path: str, data_format: str = DataFormat.PARQUET) -> None:
     if data_format is DataFormat.CSV:
         writer.csv(path)
     if data_format is DataFormat.PARQUET:
@@ -29,11 +29,9 @@ class Processor(ABC):
 class WriterProcessor(Processor):
 
     def run(self, df: DataFrame) -> None:
-        print(self.output_data_source.options)
-        print(self.output_data_source.data_format)
-        print(self.output_data_source.mode)
-        writer: DataFrameWriter = df.coalesce(self.output_data_source.partition_number).write
-        format_save(writer, self.output_data_source.data_format, self.output_data_source.source_path)
+        writer: DataFrameWriter = df.coalesce(self.output_data_source.partition_number)\
+            .write.mode(self.output_data_source.mode)
+        format_save(writer, self.output_data_source.source_path, self.output_data_source.data_format)
 
     def __init__(self,
                  input_data_source: DataSource,

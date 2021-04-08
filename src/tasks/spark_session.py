@@ -21,16 +21,7 @@ class Session:
     def read(self, data_source: DataSource) -> DataFrame:
         source_path = data_source.source_path
         reader: DataFrameReader = self.spark_session.read
-        if data_source.data_format == DataFormat.CSV:
-            has_header: bool = data_source.options.get("header")
-            print(source_path)
-            if has_header is None:
-                has_header = False
-            return reader.csv(path=source_path, header=True)
-        if data_source.data_format == DataFormat.JSON:
-            return reader.json(source_path)
-        if data_source.data_format == DataFormat.PARQUET:
-            return reader.parquet(path=source_path, options=data_source.options)
+        return reader.load(path=source_path, format=data_source.data_format.value, options=data_source.options)
 
     def __init__(self, app_name: str = "default session name"):
         self.spark_session = None

@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 
 class DataFormat(Enum):
@@ -16,10 +17,10 @@ class DataSource:
                  partition_number: int = 8,
                  partition_by: str = None,
                  mode: str = "append",
-                 **options: dict) -> None:
+                 options: Optional[dict] = None) -> None:
         self.source_path = source_path
-        self.data_format = data_format
+        self.data_format: DataFormat = data_format
         self.partition_number = partition_number
         self.partition_by = partition_by
         self.mode = mode
-        self.options = options
+        self.options: Optional[dict] = options
