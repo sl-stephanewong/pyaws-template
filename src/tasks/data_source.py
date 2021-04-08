@@ -19,6 +19,21 @@ class DataSource(ABC):
         self.options = options
 
 
+class SourceKey(Enum):
+    SRC_PATH = "source_path"
+    DATA_FORMAT = "data_format"
+    PART_NUMBER = "partition_number"
+    PART_BY = "partition_by"
+    MODE = "mode"
+
+    # JDBC
+    URL = "url"
+    USER = "username"
+    PWD = "password"
+    DRIVER = "driver"
+    TABLE = "table"
+
+
 class FileDataSource(DataSource):
 
     # default format is parquet
@@ -36,22 +51,14 @@ class FileDataSource(DataSource):
         self.mode = mode
         self.options: Optional[dict] = options
 
-
-class JDBCDataSourceKey(Enum):
-    URL = "url"
-    USERNAME = "username"
-    PWD = "password"
-    TABLE = "table"
-
-
 class JDBCDataSource(DataSource):
 
     def get_properties(self) -> dict:
-        return {"user": self.options.get(JDBCDataSourceKey.USERNAME),
-                "password": self.options.get(JDBCDataSourceKey.PWD)}
+        return {"user": self.options.get(SourceKey.USER),
+                "password": self.options.get(SourceKey.PWD)}
 
     def get_url(self) -> str:
-        return self.options.get(JDBCDataSourceKey.URL)
+        return self.options.get(SourceKey.URL)
 
     def __init__(self,
                  options: dict,
