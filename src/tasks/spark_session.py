@@ -21,7 +21,8 @@ class Session:
     def read(self, data_source: DataSource) -> DataFrame:
         source_path = data_source.source_path
         reader: DataFrameReader = self.spark_session.read
-        return reader.load(path=source_path, format=data_source.data_format.value, options=data_source.options)
+        return reader.option("header", True)\
+            .load(path=source_path, format=data_source.data_format.value, options=data_source.options)
 
     def __init__(self, app_name: str = "default session name"):
         self.spark_session = None
