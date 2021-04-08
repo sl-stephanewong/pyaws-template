@@ -51,6 +51,7 @@ class FileDataSource(DataSource):
         self.mode = mode
         self.options: Optional[dict] = options
 
+
 class JDBCDataSource(DataSource):
 
     def get_properties(self) -> dict:
