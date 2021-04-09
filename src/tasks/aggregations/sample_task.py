@@ -26,7 +26,7 @@ class SampleTask(AggregationTask):
         )
         self.session = Session(task_name)
 
-    def _aggregation(self, df: DataFrame) -> DataFrame:
+    def aggregation(self, df: DataFrame) -> DataFrame:
         df.show()
         old = df.filter(df["age"] > 35)
         old.show()

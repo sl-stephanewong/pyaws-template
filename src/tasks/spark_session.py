@@ -13,10 +13,12 @@ from pyspark.sql import *
 class Session:
 
     def init_session(self, app_name: str) -> SparkSession:
-        self.spark_session = SparkSession \
+        logging.info("Init spark task name: ", app_name)
+        self.spark_session: SparkSession = SparkSession \
             .builder \
             .master("local[*]") \
             .appName(app_name) \
+            .enableHiveSupport() \
             .getOrCreate()
 
     def read(self, data_source: DataSource) -> DataFrame:
@@ -26,14 +28,14 @@ class Session:
             .load(path=source_path, format=data_source.data_format.value, options=data_source.options)
 
     def __init__(self, app_name: str = "default session name"):
-        self.spark_session = None
+        self.spark_session: SparkSession = None
         self.init_session(app_name)
 
 
 class SparkTask(ABC):
 
     @abstractmethod
-    def _aggregation(self, df: DataFrame) -> DataFrame:
+    def aggregation(self, df: DataFrame = None) -> DataFrame:
         pass
 
     def _before_save(self) -> None:
@@ -43,7 +45,7 @@ class SparkTask(ABC):
         self.processors: list[Processor] = [WriterProcessor(self.input_data_source, self.output_data_source)]
         self._before_save()
         # Call aggregation from specific task
-        aggregation = self._aggregation(self.session.read(self.input_data_source))
+        aggregation = self.aggregation(self.session.read(self.input_data_source))
         # Call run on every processor
         for processor in self.processors:
             processor.run(aggregation)
@@ -55,8 +57,7 @@ class SparkTask(ABC):
 
     def __init__(self, config_filename: str = "pyaws.ini") -> None:
         self._config = ConfigUtil(config_filename)
-        # logging.info("Init spark task: ", task_name)
         self.input_data_source: DataSource = None
         self.output_data_source: DataSource = None
         self.processors: list[Processor] = None
-        self.session = None  # Session(task_name)
+        self.session: Session = None
