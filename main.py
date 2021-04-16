@@ -13,4 +13,4 @@ if __name__ == '__main__':
     # cred = aws.get_credentials()
     # c = cred.get_frozen_credentials()
     task = SampleTask()
-    task.do_save()
+    task.run()
