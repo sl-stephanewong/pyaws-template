@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import findspark
 findspark.init()
-from .data_source import DataSource, DataFormat, FileDataSource, JDBCDataSource
+from src.models.data_source import DataSource, DataFormat, JDBCDataSource
 from pyspark.sql import DataFrame, DataFrameWriter
 
 

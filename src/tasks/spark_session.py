@@ -3,7 +3,7 @@ import findspark
 
 findspark.init()
 from .processor import Processor, WriterProcessor
-from .data_source import DataFormat, DataSource
+from src.models.data_source import DataSource
 from abc import ABC, abstractmethod
 from ..utils.config import ConfigUtil
 
