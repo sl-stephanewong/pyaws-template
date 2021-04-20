@@ -6,6 +6,7 @@ from .processor import Processor, WriterProcessor
 from src.models.data_source import DataSource
 from abc import ABC, abstractmethod
 from ..utils.config import ConfigUtil
+from src.utils.utils import *
 
 from pyspark.sql import *
 
@@ -45,7 +46,7 @@ class SparkTask(ABC):
         # Call aggregation from specific task
         aggregation = self._aggregation(df)
         # Call run on every processor
-        for processor in self.processors:
+        for processor in self._processors:
             processor.run(aggregation)
         return aggregation
 
@@ -53,15 +54,16 @@ class SparkTask(ABC):
         pass
 
     def run(self) -> None:
-        self.processors: list[Processor] = [WriterProcessor(self.input_data_source, self.output_data_source)]
-        df_source = self.session.read(self.input_data_source)
+        self._processors: list[Processor] = [WriterProcessor(self._input_data_source, self._output_data_source)]
+        df_source = self._session.read(self._input_data_source)
         self._before_save(df_source)
         aggregation = self._do_save(df_source)
         self._after_save(aggregation)
 
     def __init__(self, config_filename: str = "pyaws.ini") -> None:
         self._config = ConfigUtil(config_filename)
-        self.input_data_source: DataSource = None
-        self.output_data_source: DataSource = None
-        self.processors: list[Processor] = None
-        self.session: Session = None
+        self._aws_util = AWSUtil()
+        self._input_data_source: DataSource = None
+        self._output_data_source: DataSource = None
+        self._processors: list[Processor] = None
+        self._session: Session = None

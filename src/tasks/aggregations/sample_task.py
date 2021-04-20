@@ -16,15 +16,15 @@ class SampleTask(AggregationTask):
         task_name = self._config.get_option(global_section_name, "task_name")
         input_section = global_section_name + ".input_data_source"
         output_section = global_section_name + ".output_data_source"
-        self.input_data_source: DataSource = FileDataSource(
+        self._input_data_source: DataSource = FileDataSource(
             source_path=self._config.get_option(input_section, SourceKey.SRC_PATH.value),
             data_format=DataFormat[self._config.get_option(input_section, SourceKey.DATA_FORMAT.value)]
         )
-        self.output_data_source: DataSource = FileDataSource(
+        self._output_data_source: DataSource = FileDataSource(
             source_path=self._config.get_option(output_section, SourceKey.SRC_PATH.value),
             data_format=DataFormat[self._config.get_option(output_section, SourceKey.DATA_FORMAT.value)]
         )
-        self.session = Session(task_name)
+        self._session = Session(task_name)
 
     def _aggregation(self, df: DataFrame) -> DataFrame:
         df.show()

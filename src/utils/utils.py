@@ -1,8 +1,14 @@
-from ..models.data_source import *
+import boto3
 
 
-def get_file_data_source(source: str, data_format: DataFormat = DataFormat.CSV) -> FileDataSource:
-    return FileDataSource(
-        source_path=source,
-        data_format=data_format
-    )
+class AWSUtil:
+
+    def get_credentials(self):
+        return self._session.get_credentials()
+
+    def get_resource_s3(self):
+        return self._s3
+
+    def __init__(self):
+        self._session = boto3.Session()
+        self._s3 = boto3.resource('s3')

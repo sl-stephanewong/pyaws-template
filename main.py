@@ -4,10 +4,9 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
 from src.utils.config import *
-from src.utils.s3 import *
 from src.tasks.aggregations.sample_task import SampleTask
 from src.tasks.aggregations.movie_tasks import MovieNameTask
-from src.tasks.aggregations.books_tasks import BookRecommenderTask
+from src.tasks.aggregations.books_tasks import BookTask
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -16,5 +15,5 @@ if __name__ == '__main__':
     # c = cred.get_frozen_credentials()
     #task = SampleTask()
     #task = MovieNameTask()
-    task = BookRecommenderTask()
+    task = BookTask()
     task.run()
