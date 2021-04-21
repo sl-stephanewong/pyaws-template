@@ -3,6 +3,7 @@ import findspark
 findspark.init()
 from src.models.data_source import DataSource, DataFormat, JDBCDataSource
 from pyspark.sql import DataFrame, DataFrameWriter
+from src.utils.utils import AWSUtil
 
 
 def format_save(writer: DataFrameWriter, data_source: DataSource) -> None:
@@ -25,19 +26,22 @@ class Processor(ABC):
         pass
 
     def __init__(self, input_data_source: DataSource,
-                 output_data_source: DataSource) -> None:
-        self.input_data_source = input_data_source
-        self.output_data_source = output_data_source
+                 output_data_source: DataSource,
+                 aws_util: AWSUtil = AWSUtil()) -> None:
+        self._input_data_source = input_data_source
+        self._output_data_source = output_data_source
+        self._aws_util = aws_util
 
 
 class WriterProcessor(Processor):
 
     def run(self, df: DataFrame) -> None:
-        writer: DataFrameWriter = df.coalesce(self.output_data_source.partition_number)\
-            .write.mode(self.output_data_source.mode)
-        format_save(writer, self.output_data_source)
+        writer: DataFrameWriter = df.coalesce(self._output_data_source.partition_number)\
+            .write.mode(self._output_data_source.mode)
+        format_save(writer, self._output_data_source)
 
     def __init__(self,
                  input_data_source: DataSource,
-                 output_data_source: DataSource) -> None:
-        super().__init__(input_data_source, output_data_source)
+                 output_data_source: DataSource,
+                 aws_util: AWSUtil = AWSUtil()) -> None:
+        super().__init__(input_data_source, output_data_source, aws_util)

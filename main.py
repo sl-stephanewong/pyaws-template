@@ -1,19 +1,16 @@
-# This is a sample Python script.
+import sys
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-from src.utils.config import *
-from src.tasks.aggregations.sample_task import SampleTask
-from src.tasks.aggregations.movie_tasks import MovieNameTask
-from src.tasks.aggregations.books_tasks import BookTask
+from pyspark import SparkContext, SparkConf
+from src.tasks.aggregations.books_tasks import *
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # aws = AWSUtil()
-    # cred = aws.get_credentials()
-    # c = cred.get_frozen_credentials()
+    #aws = AWSUtil()
+    #cred = aws.get_credentials()
+    #c = cred.get_frozen_credentials()
+    #print(c)
     #task = SampleTask()
     #task = MovieNameTask()
+    #from .src.tasks.aggregations.books_tasks import BookTask
     task = BookTask()
     task.run()

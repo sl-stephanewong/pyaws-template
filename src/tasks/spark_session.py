@@ -13,9 +13,9 @@ from pyspark.sql import *
 
 class Session:
 
-    def init_session(self, app_name: str) -> SparkSession:
+    def init_session(self, app_name: str = "default session name") -> SparkSession:
         logging.info("Init spark task name: ", app_name)
-        self.spark_session: SparkSession = SparkSession \
+        self._spark_session: SparkSession = SparkSession \
             .builder \
             .master("local[*]") \
             .appName(app_name) \
@@ -23,14 +23,19 @@ class Session:
             .getOrCreate()
 
     def read(self, data_source: DataSource) -> DataFrame:
+        # TODO read jdbc
         source_path = data_source.source_path
-        reader: DataFrameReader = self.spark_session.read
+        reader: DataFrameReader = self._spark_session.read
         return reader.option("header", True) \
             .load(path=source_path, format=data_source.data_format.value, options=data_source.options)
 
     def __init__(self, app_name: str = "default session name"):
-        self.spark_session: SparkSession = None
+        self._spark_session: SparkSession = None
         self.init_session(app_name)
+
+    @property
+    def spark_session(self):
+        return self._spark_session
 
 
 class SparkTask(ABC):
@@ -62,7 +67,7 @@ class SparkTask(ABC):
 
     def __init__(self, config_filename: str = "pyaws.ini") -> None:
         self._config = ConfigUtil(config_filename)
-        self._aws_util = AWSUtil()
+        self._aws_util: AWSUtil = AWSUtil()
         self._input_data_source: DataSource = None
         self._output_data_source: DataSource = None
         self._processors: list[Processor] = None

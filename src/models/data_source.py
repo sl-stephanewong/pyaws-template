@@ -13,10 +13,20 @@ class DataFormat(Enum):
 class DataSource(ABC):
 
     def __init__(self, data_format: DataFormat,
+                 partition_number: int = 8,
                  options: Optional[dict] = None) -> None:
         super().__init__()
-        self.data_format = data_format
-        self.options = options
+        self._data_format = data_format
+        self._partition_number = partition_number
+        self._options = options
+
+    @property
+    def partition_number(self):
+        return self._partition_number
+
+    @property
+    def data_format(self):
+        return self._data_format
 
 
 class SourceKey(Enum):
@@ -44,9 +54,8 @@ class FileDataSource(DataSource):
                  partition_by: str = None,
                  mode: str = "append",
                  options: Optional[dict] = None) -> None:
-        super(FileDataSource, self).__init__(data_format, options)
+        super(FileDataSource, self).__init__(data_format, partition_number, options)
         self.source_path = source_path
-        self.partition_number = partition_number
         self.partition_by = partition_by
         self.mode = mode
         self.options: Optional[dict] = options
@@ -64,4 +73,4 @@ class JDBCDataSource(DataSource):
     def __init__(self,
                  options: dict,
                  data_format: DataFormat = DataFormat.JDBC) -> None:
-        super(JDBCDataSource, self).__init__(data_format, options)
+        super(JDBCDataSource, self).__init__(data_format, options=options)

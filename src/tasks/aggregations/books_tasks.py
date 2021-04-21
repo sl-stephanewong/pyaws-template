@@ -2,15 +2,9 @@ import findspark
 
 findspark.init()
 from pyspark.sql import DataFrame
-from src.utils.utils import *
 from src.models.data_source import FileDataSource, DataFormat, DataSource, SourceKey
 from ..aggregation_task import AggregationTask
 from ..spark_session import Session
-
-import numpy as np
-import pandas as pd
-from scipy.sparse import csr_matrix
-from sklearn.neighbors import NearestNeighbors
 
 
 class BookTask(AggregationTask):
@@ -33,4 +27,13 @@ class BookTask(AggregationTask):
         self._session = Session(task_name)
 
     def _aggregation(self, df_source: DataFrame) -> DataFrame:
+
+        self._session.spark_session._jsc.hadoopConfiguration()\
+            .set("fs.s3a.endpoint", "s3.eu-west-3.amazonaws.com")
+        self._session.spark_session._jsc.hadoopConfiguration()\
+            .set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+        self._session.spark_session._jsc.hadoopConfiguration()\
+            .set("fs.s3a.access.key", self._aws_util.get_credentials().get_frozen_credentials().access_key)
+        self._session.spark_session._jsc.hadoopConfiguration()\
+            .set("fs.s3a.secret.key", self._aws_util.get_credentials().get_frozen_credentials().secret_key)
         return df_source
